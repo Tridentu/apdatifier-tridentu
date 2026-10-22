@@ -21,7 +21,7 @@ Kirigami.Page {
             Label {
                 Layout.fillWidth: true
                 horizontalAlignment: Text.AlignHCenter
-                text: i18n("Thanks for using my widget! If you appreciate my work, you can support me by starring the GitHub repository or buying me a coffee ;)")
+                text: i18n("Thanks for using Ishimura Assistant! If you appreciate this work, you can support the original developers by starring the apdatifier GitHub repository (made by exequtic) or buying him a coffee ;)")
                 font.bold: true
                 wrapMode: Text.WordWrap
             }
@@ -60,7 +60,7 @@ Kirigami.Page {
             }
 
             TapHandler {
-                onTapped: (event) => menu.opened ? menu.close() : menu.popup(event.position.x, event.position.y)
+                onTapped: event => menu.opened ? menu.close() : menu.popup(event.position.x, event.position.y)
             }
 
             Label {
@@ -92,7 +92,7 @@ Kirigami.Page {
                 anchors.horizontalCenter: parent.horizontalCenter
                 font.bold: true
                 visible: handlerGithub.hovered
-                text: "https://github.com"
+                text: i18n("Original Repository (on Github)")
             }
         }
     }

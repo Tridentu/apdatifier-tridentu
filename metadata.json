@@ -1,0 +1,28 @@
+{
+    "KPlugin": {
+        "Authors": [
+            {
+                "Name": "Evgeny Kazantsev",
+                "Email": "exequtic@gmail.com"
+            },
+            {
+                "Name": "Tridentu Group",
+                "Email": "tridentugroup@gmail.com"
+            }
+        ],
+        "Category": "System Information",
+        "Description": "Ishimura Update Assistant",
+        "Icon": "update-manager",
+        "Id": "com.github.tridentu.apdatifier.tridentu",
+        "Name": "Ishimura Assistant",
+        "EnabledByDefault": true,
+        "Version": "2.9.9",
+        "License": "MIT",
+        "BugReportUrl": "https://github.com/Tridentu/apdatifier/issues",
+        "Website": "https://github.com/Tridentu/apdatifier"
+    },
+    "KPackageStructure": "Plasma/Applet",
+    "X-Plasma-API-Minimum-Version": "6.0",
+    "X-Plasma-NotificationArea": "true",
+    "X-Plasma-NotificationAreaCategory": "SystemServices"
+}

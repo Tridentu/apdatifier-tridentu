@@ -1,0 +1,172 @@
+#!/usr/bin/env bash
+
+source "$(dirname "$0")/utils"
+
+trap 'echo -e "\n\n$(colorize red bold $ICO_WARN "CTRL+C. $UPGRADE_SKIPPED")"' SIGINT
+
+run() {
+    [[ -z $2 ]] && printExec "$1"
+
+    if [ "$idleInhibit" = true ]; then
+        read -ra cmd <<< "$1"
+        systemd-inhibit --what=idle:sleep:shutdown --who="Ishimura Assistant" --why="$UPGRADE_PROGRESS" "${cmd[@]}"
+    else
+        eval ${1}
+    fi
+}
+
+printClose() {
+    tput civis
+    printMsg "$UPGRADE_ENTER"
+
+    while ! read -t 30 -r; do
+        if command -v gdbus >/dev/null; then
+            gdbus call --session \
+                --dest org.kde.plasmashell \
+                --object-path /org/kde/osdService \
+                --method org.kde.osdService.showText \
+                update-manager "$UPGRADE_COMPLETE" >/dev/null 2>&1
+        fi
+    done
+
+    tput cnorm
+    [[ $(basename "$terminal") = "yakuake" ]] && qdbusCMD sessions removeSession "$(qdbusCMD sessions activeSessionId)"
+}
+
+bin="$sudoBin apt"
+# Prints "name version" for installed packages matching critical_packages
+criticalVersions() {
+    local re
+    re="^($(IFS='|'; echo "${critical_packages[*]//\*/.*}"))$"
+    dpkg-query -W -f='${db:Status-Abbrev} ${Package} ${Version}\n' 2>/dev/null |
+        awk -v re="$re" '$1 == "ii" && $2 ~ re { print $2, $3 }'
+}
+
+fullSystemUpgrade() {
+    startTime=$(date +%s)
+    critical_updated=()
+    critical_packages=(
+        "linux-image-*"
+        "linux-modules-*"
+        "linux-headers-*"
+        "vhba-dkms"
+        "flatpak"
+        "kexec-tools"
+    )
+
+    if [ "$arch" = true ]; then
+        printMsg "$UPGRADE_FULL_ARCH"
+        echo
+
+        if [ -n "$preExec" ]; then
+            run "$preExec"
+            printf '\n\033[32m'; printf '%.0s:' {1..48}; printf '\033[0m\n\n'
+        fi
+
+        declare -A beforeVersions
+        if [ "$rebootSystem" = true ]; then
+            while read -r name ver; do
+                beforeVersions[$name]=$ver
+            done < <(criticalVersions)
+        fi
+
+        test -f "$configDir/env.sh" && source "$configDir/env.sh"
+
+        run "$sudoBin apt update"
+        run "$sudoBin apt full-upgrade $archFlags"
+
+        if [ "$rebootSystem" = true ]; then
+            while read -r name ver; do
+                [ "${beforeVersions[$name]}" != "$ver" ] && critical_updated+=("$name")
+            done < <(criticalVersions)
+        fi
+    fi
+
+    if [ "$flatpak" = true ]; then
+        printMsg "$UPGRADE_FULL_FLATPAK"
+        echo
+
+        run "flatpak update $flatpakFlags"
+
+        if [ "$flatpakRemoveUnused" = true ]; then
+            echo
+            run "flatpak uninstall --unused $flatpakFlags"
+        fi
+    fi
+
+    if [ "$widgets" = true ]; then
+        printMsg "$UPGRADE_FULL_WIDGETS"
+        echo
+        run "$scriptDir/widgets upgradeAll" noPrint
+    fi
+
+    if [ "$fwupd" = true ]; then
+        printMsg "fwupdmgr"
+        echo
+        run "$sudoBin fwupdmgr update"
+    fi
+
+    if [ -n "$postExec" ]; then
+        printf '\n\033[32m'; printf '%.0s:' {1..48}; printf '\033[0m\n\n'
+        run "$postExec"
+    fi
+
+    trap ' ' SIGINT
+
+    endTime=$(date +%s)
+    runTime=$((endTime-startTime))
+    echo; echo
+    printImportant "$UPGRADE_EXECTIME" "$(printf "%02dh:%02dm:%02ds" $((runTime / 3600)) $(( (runTime % 3600) / 60 )) $((runTime % 60)))"
+
+    if [ ${#critical_updated[@]} -gt 0 ]; then
+        echo
+        printImportant "$UPGRADE_CRITICAL" "${critical_updated[*]}"
+        while true; do
+            printQuestion "$UPGRADE_REBOOT"; read -r answer
+            case "$answer" in
+                    [Yy]*) sys_reboot; exit;;
+                 [Nn]*|"") break;;
+                        *)  ;;
+            esac
+        done
+    fi
+
+    printClose
+}
+
+sys_reboot() {
+    tput civis
+    printMsg "$UPGRADE_REBOOTING"
+
+    read -s -t 2
+
+    qdbus6 org.kde.Shutdown /Shutdown logoutAndReboot
+}
+
+flatpak_package() {
+    printMsg "$UPGRADE_PACKAGE: $2"
+    echo
+
+    printExec "flatpak update" "$1 $flatpakFlags"
+
+    flatpak update $1 $flatpakFlags
+
+    printClose
+}
+
+widget_package() {
+    printMsg "$UPGRADE_PACKAGE: $2"
+    echo
+
+    "$scriptDir"/widgets upgrade "$1" "$2"
+
+    printClose
+}
+
+
+case "$1" in
+          "full") shift; fullSystemUpgrade $@ ;;
+       "flatpak") shift; flatpak_package $1 $2;;
+        "widget") shift; widget_package $1 $2;;
+               *) exit;;
+esac

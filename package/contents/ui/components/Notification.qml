@@ -6,7 +6,7 @@ Item {
     Component {
         id: notifyComponent
         Notification {
-            componentName: "apdatifier"
+            componentName: "apdatifier-tridentu"
             flags: cfg.notifyPersistent ? Notification.Persistent : Notification.CloseOnTimeout
         }
     }
@@ -31,7 +31,7 @@ Item {
     function send(event, title, body, link) {
         const params = {
             updates: {
-                icon: "apdatifier-packages",
+                icon: "update-manager",
                 urgency: "DefaultUrgency"
             },
             news: {
@@ -42,15 +42,19 @@ Item {
                 icon: "error",
                 urgency: "CriticalUrgency"
             }
-        }
+        };
 
-        const { icon, urgency } = params[event]
+        const {
+            icon,
+            urgency
+        } = params[event];
 
-        const action = (event === "updates" && cfg.notifyUpdatesAction) ? upgradeAction.createObject(root)
-                     : (event === "news" && cfg.notifyNewsAction) ? openArticleAction.createObject(root, { link: link })
-                     : []
+        const action = (event === "updates" && cfg.notifyUpdatesAction) ? upgradeAction.createObject(root) : (event === "news" && cfg.notifyNewsAction) ? openArticleAction.createObject(root, {
+            link: link
+        }) : [];
 
-        if (cfg.notifySound) event += "Sound"
+        if (cfg.notifySound)
+            event += "Sound";
 
         notifyComponent.createObject(root, {
             eventId: event,
@@ -59,6 +63,6 @@ Item {
             text: body,
             actions: action,
             urgency: urgency
-        })?.sendEvent()
+        })?.sendEvent();
     }
 }

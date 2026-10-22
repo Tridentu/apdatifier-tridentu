@@ -18,24 +18,23 @@ Representation {
     property bool expanded: root.expanded
     onExpandedChanged: {
         if (plasmoid.configuration.switchDefaultTab && !expanded)
-            listCompactMode = (plasmoid.configuration.defaultTab !== 0)
+            listCompactMode = (plasmoid.configuration.defaultTab !== 0);
     }
 
     function svg(icon) {
-        return Qt.resolvedUrl("../assets/icons/" + icon + ".svg")
+        return Qt.resolvedUrl("../assets/icons/" + icon + ".svg");
     }
 
     property var backgroundHidden: (Plasmoid.formFactor === PlasmaCore.Types.Planar) && (Plasmoid.userBackgroundHints === PlasmaCore.Types.ShadowBackground)
     onBackgroundHiddenChanged: topHeader.background.visible = bottomHeader.background.visible = !backgroundHidden
 
-
     property bool activeNewsItems: false
     function checkActiveNewsItems() {
-        activeNewsItems = false
+        activeNewsItems = false;
         for (let i = 0; i < newsModel.count; ++i) {
             if (newsModel.get(i).removed === false) {
-                activeNewsItems = true
-                return
+                activeNewsItems = true;
+                return;
             }
         }
     }
@@ -43,10 +42,10 @@ Representation {
     Connections {
         target: newsModel
         function onDataChanged() {
-            checkActiveNewsItems()
+            checkActiveNewsItems();
         }
         function onCountChanged() {
-            checkActiveNewsItems()
+            checkActiveNewsItems();
         }
     }
 
@@ -105,16 +104,16 @@ Representation {
                     visible: cfg.searchButton && sts.count
                     enabled: visible && swipeView.currentIndex === 0
                     onClicked: {
-                        if (searchFieldOpen) searchField.text = ""
-                        searchFieldOpen = !searchField.visible
-                        searchField.focus = searchFieldOpen
+                        if (searchFieldOpen)
+                            searchField.text = "";
+                        searchFieldOpen = !searchField.visible;
+                        searchField.focus = searchFieldOpen;
                     }
                 }
 
                 ToolbarButton {
                     tooltipText: sts.paused ? i18n("Enable auto search updates") : i18n("Disable auto search updates")
-                    iconSource: cfg.ownIconsUI ? (!sts.paused ? svg("toolbar_pause") : svg("toolbar_start"))
-                                               : (!sts.paused ? "media-playback-paused" : "media-playback-playing")
+                    iconSource: cfg.ownIconsUI ? (!sts.paused ? svg("toolbar_pause") : svg("toolbar_start")) : (!sts.paused ? "media-playback-paused" : "media-playback-playing")
                     iconColor: sts.paused ? Kirigami.Theme.negativeTextColor : Kirigami.Theme.colorSet
                     enabled: !sts.busy
                     visible: enabled && cfg.intervalButton && cfg.checkMode !== "manual"
@@ -131,9 +130,7 @@ Representation {
 
                 ToolbarButton {
                     tooltipText: listCompactMode ? i18n("Extended") : i18n("Compact")
-                    iconSource: cfg.ownIconsUI ? (listCompactMode ? svg("tab_extended") : svg("tab_compact"))
-                                               : (listCompactMode ? "view-split-top-bottom" : "view-split-left-right")
-
+                    iconSource: cfg.ownIconsUI ? (listCompactMode ? svg("tab_extended") : svg("tab_compact")) : (listCompactMode ? "view-split-top-bottom" : "view-split-left-right")
 
                     visible: cfg.viewButton && sts.count && swipeView.currentIndex === 0
                     enabled: visible
@@ -146,7 +143,10 @@ Representation {
                     iconSource: cfg.ownIconsUI ? svg("toolbar_management") : "tools"
                     enabled: !sts.busy && pkg.pacman !== "" && cfg.terminal
                     visible: enabled && cfg.managementButton
-                    onClicked: { buttonTooltip.hide(); JS.management() }
+                    onClicked: {
+                        buttonTooltip.hide();
+                        JS.management();
+                    }
                 }
 
                 ToolbarButton {
@@ -155,13 +155,15 @@ Representation {
                     iconSource: cfg.ownIconsUI ? svg("toolbar_upgrade") : "akonadiconsole"
                     enabled: !sts.busy && sts.count && cfg.terminal
                     visible: enabled && cfg.upgradeButton
-                    onClicked: { buttonTooltip.hide(); JS.upgradeSystem() }
+                    onClicked: {
+                        buttonTooltip.hide();
+                        JS.upgradeSystem();
+                    }
                 }
 
                 ToolbarButton {
                     tooltipText: sts.busy ? i18n("Stop checking") : i18n("Check updates")
-                    iconSource: cfg.ownIconsUI ? (sts.busy ? svg("toolbar_stop") : svg("toolbar_check"))
-                                               : (sts.busy ? "media-playback-stopped" : "view-refresh")
+                    iconSource: cfg.ownIconsUI ? (sts.busy ? svg("toolbar_stop") : svg("toolbar_check")) : (sts.busy ? "media-playback-stopped" : "view-refresh")
                     visible: cfg.checkButton && !sts.upgrading
                     onClicked: sts.proc ? JS.stopCheck() : JS.checkUpdates()
                 }
@@ -175,8 +177,7 @@ Representation {
 
                 ToolbarButton {
                     tooltipText: pinned ? i18n("Unpin window") : i18n("Keep open")
-                    iconSource: cfg.ownIconsUI ? (pinned ? svg("toolbar_unpin") : svg("toolbar_pin"))
-                                               : (pinned ? "window-unpin" : "window-pin")
+                    iconSource: cfg.ownIconsUI ? (pinned ? svg("toolbar_unpin") : svg("toolbar_pin")) : (pinned ? "window-unpin" : "window-pin")
                     visible: cfg.pinButton && !inTray && !onDesktop
                     onClicked: pinned = !pinned
                 }
@@ -198,10 +199,10 @@ Representation {
             position: TabBar.Footer
             currentIndex: swipeView.currentIndex
             onCurrentIndexChanged: {
-                swipeView.currentIndex = currentIndex
+                swipeView.currentIndex = currentIndex;
                 if (swipeView.currentIndex >= 1) {
-                    searchFieldOpen = false
-                    searchField.text = ""
+                    searchFieldOpen = false;
+                    searchField.text = "";
                 }
             }
 
@@ -211,21 +212,22 @@ Representation {
                         id: "updates",
                         icon: "status_package",
                         fallback: "kpackagekit-updates",
-                        label: i18n("Updates"),
+                        label: i18n("Updates")
                     },
                     cfg.feedsEnabled ? {
                         id: "news",
                         icon: "status_news",
                         fallback: "news-subscribe",
-                        label: i18n("News"),
-                    } : null
-                    ].filter(Boolean)
+                        label: i18n("News")
+                    } : null].filter(Boolean)
 
                 delegate: TabButton {
                     required property var modelData
                     contentItem: RowLayout {
                         Kirigami.Theme.inherit: true
-                        Item { Layout.fillWidth: true }
+                        Item {
+                            Layout.fillWidth: true
+                        }
                         Kirigami.Icon {
                             Layout.preferredHeight: Kirigami.Units.iconSizes.small
                             Layout.preferredWidth: Kirigami.Units.iconSizes.small
@@ -234,8 +236,13 @@ Representation {
                             isMask: cfg.ownIconsUI
                             smooth: true
                         }
-                        Label { text: modelData.label; visible: cfg.tabBarTexts }
-                        Item { Layout.fillWidth: true }
+                        Label {
+                            text: modelData.label
+                            visible: cfg.tabBarTexts
+                        }
+                        Item {
+                            Layout.fillWidth: true
+                        }
                     }
                 }
             }
@@ -249,17 +256,20 @@ Representation {
         Loader {
             Layout.fillWidth: true
             active: sts.busy
-            sourceComponent: ProgressBar { from: 0; to: 100; indeterminate: true }
+            sourceComponent: ProgressBar {
+                from: 0
+                to: 100
+                indeterminate: true
+            }
         }
 
         TextField {
+            id: searchField
             Layout.fillWidth: true
             Layout.topMargin: Kirigami.Units.smallSpacing * 2
             Layout.bottomMargin: Kirigami.Units.smallSpacing * 2
             Layout.leftMargin: Kirigami.Units.smallSpacing * 2
             Layout.rightMargin: Kirigami.Units.smallSpacing * 2
-
-            id: searchField
             clearButtonShown: true
             visible: searchFieldOpen && sts.count
             placeholderText: i18n("Filter by package name")
@@ -270,10 +280,12 @@ Representation {
             Layout.fillWidth: true
             Layout.topMargin: Kirigami.Units.smallSpacing * 2
             Layout.bottomMargin: Kirigami.Units.smallSpacing * 2
-            text: "<b>" + i18n("Check out release notes")+" "+currVersion+"</b>"
+            text: "<b>" + i18n("Check out release notes") + " " + currVersion + "</b>"
             type: Kirigami.MessageType.Positive
-            visible: !searchFieldOpen && isOnline &&
-                     plasmoid.configuration.version.localeCompare(currVersion, undefined, { numeric: true, sensitivity: 'base' }) < 0
+            visible: !searchFieldOpen && isOnline && plasmoid.configuration.version.localeCompare(currVersion, undefined, {
+                numeric: true,
+                sensitivity: 'base'
+            }) < 0
 
             actions: [
                 Kirigami.Action {
@@ -284,7 +296,7 @@ Representation {
                     Kirigami.Action {
                         text: "GitHub"
                         icon.name: "internet-web-browser-symbolic"
-                        onTriggered: Qt.openUrlExternally("https://github.com/exequtic/apdatifier/releases")
+                        onTriggered: Qt.openUrlExternally("https://github.com/Tridentu/apdatifier/releases")
                     }
                     Kirigami.Action {
                         text: i18n("Dismiss")
@@ -312,9 +324,12 @@ Representation {
             currentIndex: 0
             Repeater {
                 model: [
-                    { component: "updates" },
-                    cfg.feedsEnabled ? { component: "news" } : null
-                ].filter(Boolean)
+                    {
+                        component: "updates"
+                    },
+                    cfg.feedsEnabled ? {
+                        component: "news"
+                    } : null].filter(Boolean)
 
                 delegate: Loader {
                     required property var modelData
@@ -322,8 +337,16 @@ Representation {
                 }
             }
 
-            Component { id: updatesComp; View.Updates {} }
-            Component { id: newsComp; View.News { id: newsPage } }
+            Component {
+                id: updatesComp
+                View.Updates {}
+            }
+            Component {
+                id: newsComp
+                View.News {
+                    id: newsPage
+                }
+            }
         }
     }
 
@@ -334,8 +357,8 @@ Representation {
         visible: errorLoader.active
     }
     Loader {
-        z: 9999
         id: errorLoader
+        z: 9999
         anchors.centerIn: parent
         active: !sts.busy && sts.error
         sourceComponent: ColumnLayout {
@@ -351,7 +374,7 @@ Representation {
                 }
                 Kirigami.Heading {
                     text: i18np("%1 error occurred", "%1 errors occurred", sts.errors.length)
-                    type: Kirigami.Heading.Primary   
+                    type: Kirigami.Heading.Primary
                     Layout.fillWidth: true
                     wrapMode: Text.WordWrap
                 }
@@ -378,8 +401,8 @@ Representation {
                 icon.name: "checkmark"
                 text: "OK"
                 onClicked: {
-                    sts.errors = []
-                    JS.setStatusBar()
+                    sts.errors = [];
+                    JS.setStatusBar();
                 }
             }
         }
@@ -390,7 +413,7 @@ Representation {
         sourceModel: listModel
         filterRoleName: "name"
         filterRowCallback: (sourceRow, sourceParent) => {
-            return sourceModel.data(sourceModel.index(sourceRow, 0, sourceParent), filterRole).includes(searchField.text)
+            return sourceModel.data(sourceModel.index(sourceRow, 0, sourceParent), filterRole).includes(searchField.text);
         }
     }
 }

@@ -47,7 +47,7 @@ SimpleKCM {
     property int currentTab
     signal tabChanged(currentTab: int)
     onCurrentTabChanged: tabChanged(currentTab)
- 
+
     header: Kirigami.NavigationTabBar {
         actions: [
             Kirigami.Action {
@@ -551,7 +551,7 @@ SimpleKCM {
 
                 GridLayout {
                     columns: 1
-                
+
                     Repeater {
                         model: countryListModel
                         delegate: CheckBox {
@@ -742,7 +742,7 @@ SimpleKCM {
         id: countryListModel
 
         function createCountryList() {
-            let countries = 
+            let countries =
                 "Australia:AU, Austria:AT, Azerbaijan:AZ, Bangladesh:BD, Belarus:BY, Belgium:BE, " +
                 "Brazil:BR, Bulgaria:BG, Cambodia:KH, Canada:CA, Chile:CL, China:CN, Colombia:CO, " +
                 "Croatia:HR, Czech Republic:CZ, Denmark:DK, Ecuador:EC, Estonia:EE, Finland:FI, " +

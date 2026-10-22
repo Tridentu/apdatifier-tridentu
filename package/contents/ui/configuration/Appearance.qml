@@ -71,17 +71,32 @@ SimpleKCM {
     readonly property bool badgeMode: cfg_counterMode === "badge"
 
     readonly property var positions: [
-        { name: i18n("Disabled"),     value: "disabled" },
-        { name: i18n("Top-Left"),     value: "topLeft" },
-        { name: i18n("Top-Right"),    value: "topRight" },
-        { name: i18n("Bottom-Left"),  value: "bottomLeft" },
-        { name: i18n("Bottom-Right"), value: "bottomRight" }
+        {
+            name: i18n("Disabled"),
+            value: "disabled"
+        },
+        {
+            name: i18n("Top-Left"),
+            value: "topLeft"
+        },
+        {
+            name: i18n("Top-Right"),
+            value: "topRight"
+        },
+        {
+            name: i18n("Bottom-Left"),
+            value: "bottomLeft"
+        },
+        {
+            name: i18n("Bottom-Right"),
+            value: "bottomRight"
+        }
     ]
 
     property int currentTab
     signal tabChanged(currentTab: int)
     onCurrentTabChanged: tabChanged(currentTab)
- 
+
     header: Kirigami.NavigationTabBar {
         actions: [
             Kirigami.Action {
@@ -143,7 +158,7 @@ SimpleKCM {
 
                 MenuItem {
                     text: i18n("Default") + " 1"
-                    icon.name: "apdatifier-plasmoid"
+                    icon.name: "update-manager"
                     enabled: cfg_selectedIcon !== JS.defaultIcon
                     onClicked: cfg_selectedIcon = JS.defaultIcon
                 }
@@ -192,8 +207,8 @@ SimpleKCM {
             }
 
             SpinBox {
-                Layout.preferredWidth: Kirigami.Units.gridUnit * 3
                 id: hideIconPolicy
+                Layout.preferredWidth: Kirigami.Units.gridUnit * 3
                 from: 0
                 to: 999
                 stepSize: 1
@@ -218,7 +233,7 @@ SimpleKCM {
                     id: busyIndicatorGroup
                     onCheckedButtonChanged: {
                         if (checkedButton) {
-                            cfg_busyIndicator = checkedButton.modeValue
+                            cfg_busyIndicator = checkedButton.modeValue;
                         }
                     }
                 }
@@ -236,12 +251,12 @@ SimpleKCM {
                 }
 
                 Component.onCompleted: {
-                    const current = plasmoid.configuration.busyIndicator || "spinner"
+                    const current = plasmoid.configuration.busyIndicator || "spinner";
                     for (let i = 0; i < busyIndicatorGroup.buttons.length; ++i) {
-                        const b = busyIndicatorGroup.buttons[i]
+                        const b = busyIndicatorGroup.buttons[i];
                         if (b.modeValue === current) {
-                            b.checked = true
-                            break
+                            b.checked = true;
+                            break;
                         }
                     }
                 }
@@ -268,7 +283,7 @@ SimpleKCM {
                     id: counterModeGroup
                     onCheckedButtonChanged: {
                         if (checkedButton) {
-                            cfg_counterMode = checkedButton.modeValue
+                            cfg_counterMode = checkedButton.modeValue;
                         }
                     }
                 }
@@ -290,14 +305,14 @@ SimpleKCM {
                 }
                 Component.onCompleted: {
                     if (allowOnlyCounterBadge && plasmoid.configuration.counterMode === "side") {
-                        plasmoid.configuration.counterMode = "badge"
+                        plasmoid.configuration.counterMode = "badge";
                     }
 
                     for (let i = 0; i < counterModeGroup.buttons.length; ++i) {
-                        const b = counterModeGroup.buttons[i]
+                        const b = counterModeGroup.buttons[i];
                         if (b.modeValue === plasmoid.configuration.counterMode) {
-                            b.checked = true
-                            break
+                            b.checked = true;
+                            break;
                         }
                     }
                 }
@@ -310,7 +325,12 @@ SimpleKCM {
                 id: counterBadgePosition
                 enabled: badgeMode
                 textRole: "name"
-                model: positions.slice(1).concat([{ name: i18n("Center"), value: "center" }])
+                model: positions.slice(1).concat([
+                    {
+                        name: i18n("Center"),
+                        value: "center"
+                    }
+                ])
                 onCurrentIndexChanged: cfg_counterBadgePosition = model[currentIndex].value
                 Component.onCompleted: currentIndex = JS.setIndex(plasmoid.configuration.counterBadgePosition, model)
             }
@@ -324,14 +344,16 @@ SimpleKCM {
                 text: i18n("Left")
                 checked: cfg_counterSidePosition === "left"
                 onCheckedChanged: {
-                    if (checked) cfg_counterSidePosition = "left"
+                    if (checked)
+                        cfg_counterSidePosition = "left";
                 }
             }
             RadioButton {
                 text: i18n("Right")
                 checked: cfg_counterSidePosition === "right"
                 onCheckedChanged: {
-                    if (checked) cfg_counterSidePosition = "right"
+                    if (checked)
+                        cfg_counterSidePosition = "right";
                 }
             }
         }
@@ -342,11 +364,13 @@ SimpleKCM {
             spacing: Kirigami.Units.largeSpacing
 
             RowLayout {
-                Label { text: i18n("Inner") + ":" }
+                Label {
+                    text: i18n("Inner") + ":"
+                }
                 SpinBox {
+                    id: counterGapsInner
                     Layout.preferredWidth: Kirigami.Units.gridUnit * 3
                     enabled: sideMode
-                    id: counterGapsInner
                     from: 0
                     to: 99
                     stepSize: 1
@@ -354,11 +378,13 @@ SimpleKCM {
             }
 
             RowLayout {
-                Label { text: i18n("Outer") + ":" }
+                Label {
+                    text: i18n("Outer") + ":"
+                }
                 SpinBox {
+                    id: counterGapsOuter
                     Layout.preferredWidth: Kirigami.Units.gridUnit * 3
                     enabled: sideMode
-                    id: counterGapsOuter
                     from: 0
                     to: 99
                     stepSize: 1
@@ -369,19 +395,23 @@ SimpleKCM {
         RowLayout {
             Kirigami.FormData.label: i18n("Offset") + ":"
             enabled: badgeMode
-            Label { text: "X:" }
+            Label {
+                text: "X:"
+            }
             SpinBox {
-                Layout.preferredWidth: Kirigami.Units.gridUnit * 3
                 id: counterOffsetX
+                Layout.preferredWidth: Kirigami.Units.gridUnit * 3
                 from: -5
                 to: 5
                 stepSize: 1
             }
 
-            Label { text: "Y:" }
+            Label {
+                text: "Y:"
+            }
             SpinBox {
-                Layout.preferredWidth: Kirigami.Units.gridUnit * 3
                 id: counterOffsetY
+                Layout.preferredWidth: Kirigami.Units.gridUnit * 3
                 from: -5
                 to: 5
                 stepSize: 1
@@ -399,13 +429,19 @@ SimpleKCM {
             editable: true
             textRole: "name"
             model: {
-                let fonts = Qt.fontFamilies()
-                let arr = []
-                arr.push({"name": i18n("Default system font"), "value": ""})
+                let fonts = Qt.fontFamilies();
+                let arr = [];
+                arr.push({
+                    "name": i18n("Default system font"),
+                    "value": ""
+                });
                 for (let i = 0; i < fonts.length; i++) {
-                    arr.push({"name": fonts[i], "value": fonts[i]})
+                    arr.push({
+                        "name": fonts[i],
+                        "value": fonts[i]
+                    });
                 }
-                return arr
+                return arr;
             }
 
             onCurrentIndexChanged: cfg_counterFontFamily = model[currentIndex]["value"]
@@ -413,19 +449,19 @@ SimpleKCM {
         }
 
         Slider {
+            id: counterFontSize
             Kirigami.FormData.label: i18n("Font size") + ":"
             Layout.preferredWidth: Kirigami.Units.gridUnit * 10
             enabled: counterEnabled
-            id: counterFontSize
             from: 2
             to: 8
             stepSize: 1
         }
 
         CheckBox {
+            id: counterFontBold
             Kirigami.FormData.label: i18n("Font bold") + ":"
             enabled: counterEnabled
-            id: counterFontBold
             text: i18n("Enable")
             onCheckedChanged: cfg_counterFontBold = counterFontBold.checked
         }
@@ -435,11 +471,10 @@ SimpleKCM {
         }
 
         Button {
+            id: counterColor
             Kirigami.FormData.label: i18n("Badge color") + ":"
             Layout.leftMargin: Kirigami.Units.gridUnit
             enabled: badgeMode
-
-            id: counterColor
             implicitWidth: Kirigami.Units.gridUnit * 4
             implicitHeight: Kirigami.Units.gridUnit
 
@@ -460,7 +495,6 @@ SimpleKCM {
                     color: Kirigami.ColorUtils.brightnessForColor(bg.color) === Kirigami.ColorUtils.Dark ? "white" : "black"
                 }
             }
-
 
             onPressed: menuColor.opened ? menuColor.close() : menuColor.open()
 
@@ -489,7 +523,7 @@ SimpleKCM {
                 selectedColor: cfg_counterColor
 
                 onAccepted: {
-                    cfg_counterColor = selectedColor
+                    cfg_counterColor = selectedColor;
                 }
             }
 
@@ -509,8 +543,8 @@ SimpleKCM {
             enabled: badgeMode
 
             Slider {
-                Layout.preferredWidth: Kirigami.Units.gridUnit * 10
                 id: counterRadius
+                Layout.preferredWidth: Kirigami.Units.gridUnit * 10
                 from: 0
                 to: 100
                 stepSize: 1
@@ -526,8 +560,8 @@ SimpleKCM {
             enabled: badgeMode
 
             Slider {
-                Layout.preferredWidth: Kirigami.Units.gridUnit * 10
                 id: counterOpacity
+                Layout.preferredWidth: Kirigami.Units.gridUnit * 10
                 from: 0
                 to: 10
                 stepSize: 1
@@ -567,19 +601,23 @@ SimpleKCM {
 
         RowLayout {
             Kirigami.FormData.label: i18n("Offset") + ":"
-            Label { text: "X:" }
+            Label {
+                text: "X:"
+            }
             SpinBox {
-                Layout.preferredWidth: Kirigami.Units.gridUnit * 3
                 id: badgeOffsetX
+                Layout.preferredWidth: Kirigami.Units.gridUnit * 3
                 from: -5
                 to: 5
                 stepSize: 1
             }
 
-            Label { text: "Y:" }
+            Label {
+                text: "Y:"
+            }
             SpinBox {
-                Layout.preferredWidth: Kirigami.Units.gridUnit * 3
                 id: badgeOffsetY
+                Layout.preferredWidth: Kirigami.Units.gridUnit * 3
                 from: -5
                 to: 5
                 stepSize: 1
@@ -601,7 +639,7 @@ SimpleKCM {
                 id: ownIconsUI
                 text: i18n("Use built-in icons")
             }
-            
+
             Kirigami.ContextualHelpButton {
                 toolTipText: i18n("Override custom icon theme and use default Apdatifier icons instead.")
             }
@@ -612,8 +650,8 @@ SimpleKCM {
         }
 
         CheckBox {
-            Kirigami.FormData.label: i18n("Scrollbar") + ":"
             id: autoHideScrollBar
+            Kirigami.FormData.label: i18n("Scrollbar") + ":"
             text: i18n("Auto-hide scrollbar")
         }
 
@@ -626,8 +664,8 @@ SimpleKCM {
         }
 
         RadioButton {
-            Kirigami.FormData.label: i18n("Default view") + ":"
             id: extendedView
+            Kirigami.FormData.label: i18n("Default view") + ":"
             ButtonGroup.group: viewGroup
             text: i18n("Extended")
             Component.onCompleted: checked = !plasmoid.configuration.defaultTab
@@ -641,8 +679,8 @@ SimpleKCM {
         }
 
         CheckBox {
-            Kirigami.FormData.label: i18n("Behavior") + ":"
             id: switchDefaultTab
+            Kirigami.FormData.label: i18n("Behavior") + ":"
             text: i18n("Always switch to default view")
         }
 
@@ -720,7 +758,6 @@ SimpleKCM {
                 icon.name: "akonadiconsole"
                 checkable: true
             }
-
         }
         RowLayout {
             enabled: showToolBar.checked
@@ -752,13 +789,22 @@ SimpleKCM {
         }
 
         ComboBox {
-            Kirigami.FormData.label: i18n("Compact view") + ":"
             id: compactInfo
+            Kirigami.FormData.label: i18n("Compact view") + ":"
             textRole: "name"
             model: [
-                { name: i18n("Repository"), value: "repository" },
-                { name: i18n("Install reason"), value: "installReason" },
-                { name: i18n("Versions"), value: "versionDiff" }
+                {
+                    name: i18n("Repository"),
+                    value: "repository"
+                },
+                {
+                    name: i18n("Install reason"),
+                    value: "installReason"
+                },
+                {
+                    name: i18n("Versions"),
+                    value: "versionDiff"
+                }
             ]
             onCurrentIndexChanged: cfg_compactInfo = model[currentIndex].value
             Component.onCompleted: currentIndex = JS.setIndex(plasmoid.configuration.compactInfo || "repository", model)
@@ -769,8 +815,8 @@ SimpleKCM {
         }
 
         CheckBox {
-            Kirigami.FormData.label: i18n("Extended view") + ":"
             id: extendedShowRepository
+            Kirigami.FormData.label: i18n("Extended view") + ":"
             text: i18n("Repository")
         }
 

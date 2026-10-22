@@ -836,7 +836,7 @@ function setIndex(value, arr) {
     return index
 }
 
-const defaultIcon = "apdatifier-plasmoid"
+const defaultIcon = "update-manager"
 function setIcon(icon) {
     return icon === "" ? defaultIcon : icon
 }

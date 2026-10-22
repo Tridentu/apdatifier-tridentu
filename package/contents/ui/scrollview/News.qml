@@ -21,7 +21,7 @@ Item {
         ScrollBar.vertical: Scroll {
             policy: newsModel.count > 0 ? ScrollBar.AsNeeded : ScrollBar.AlwaysOff
         }
-        
+
         delegate: Kirigami.AbstractCard {
             contentItem: Item {
                 implicitWidth: delegateLayout.implicitWidth
@@ -41,11 +41,7 @@ Item {
                         Layout.fillHeight: true
                         Layout.maximumHeight: Kirigami.Units.iconSizes.huge
                         Layout.preferredWidth: height
-                        source: model.title.includes("Arch")        ? "apdatifier-plasmoid" :
-                                model.title.includes("Plasma")      ? "note-symbolic" :
-                                model.title.includes("Apps")        ? "applications-all-symbolic" :
-                                model.title.includes("Community")   ? "start-here-kde-plasma-symbolic"
-                                                                    : "news-subscribe"
+                        source: model.title.includes("Arch") ? "update-manager" : model.title.includes("Plasma") ? "note-symbolic" : model.title.includes("Apps") ? "applications-all-symbolic" : model.title.includes("Community") ? "start-here-kde-plasma-symbolic" : "news-subscribe"
                     }
 
                     RowLayout {
@@ -74,17 +70,22 @@ Item {
 
                         ColumnLayout {
                             Controls.Button {
-                                ToolTip { id: tip; text: i18n("Read article") }
+                                ToolTip {
+                                    id: tip
+                                    text: i18n("Read article")
+                                }
                                 icon.name: "internet-web-browser-symbolic"
                                 onClicked: {
-                                    tip.hide()
-                                    Qt.openUrlExternally(model.link)
-                                    JS.removeNewsItem(index)
+                                    tip.hide();
+                                    Qt.openUrlExternally(model.link);
+                                    JS.removeNewsItem(index);
                                 }
                             }
                             Controls.Button {
                                 visible: !model.removed
-                                ToolTip { text: i18n("Mark as read") }
+                                ToolTip {
+                                    text: i18n("Mark as read")
+                                }
                                 icon.name: model.removed ? "backup" : "delete"
                                 onClicked: JS.removeNewsItem(index)
                             }
@@ -103,31 +104,120 @@ Item {
             }
         }
 
-        add: Transition { animations: [ NumberAnimation { properties: "opacity,scale"; from: 0; to: 1; duration: 380; easing.type: Easing.OutBack; easing.overshoot: 1.12 } ] }
-        addDisplaced: Transition { animations: [
-            NumberAnimation { property: "y"; duration: 340; easing.type: Easing.OutCubic },
-            NumberAnimation { properties: "opacity,scale"; to: 1; duration: 340; easing.type: Easing.OutBack; easing.overshoot: 1.08 }
-        ] }
-        displaced: Transition { animations: [
-            NumberAnimation { property: "y"; duration: 340; easing.type: Easing.OutBack; easing.overshoot: 1.05 },
-            NumberAnimation { properties: "opacity,scale"; to: 1; duration: 260; easing.type: Easing.OutQuad }
-        ] }
-        move: Transition { animations: [
-            NumberAnimation { property: "y"; duration: 360; easing.type: Easing.OutBack; easing.overshoot: 1.06 },
-            NumberAnimation { properties: "opacity,scale"; to: 1; duration: 260; easing.type: Easing.OutQuad }
-        ] }
-        moveDisplaced: Transition { animations: [
-            NumberAnimation { property: "y"; duration: 340; easing.type: Easing.OutBack; easing.overshoot: 1.04 },
-            NumberAnimation { properties: "opacity,scale"; to: 1; duration: 260; easing.type: Easing.OutQuad }
-        ] }
-        remove: Transition { animations: [
-            NumberAnimation { property: "x"; to: width + 120; duration: 300; easing.type: Easing.InBack; easing.overshoot: 1.15 },
-            NumberAnimation { property: "opacity"; to: 0; duration: 240; easing.type: Easing.InQuad },
-            NumberAnimation { property: "scale"; to: 0.92; duration: 300; easing.type: Easing.InBack }
-        ] }
-        removeDisplaced: Transition { animations: [
-            NumberAnimation { property: "y"; duration: 340; easing.type: Easing.OutBack; easing.overshoot: 1.03 },
-            NumberAnimation { properties: "opacity,scale"; to: 1; duration: 260; easing.type: Easing.OutQuad }
-        ] }
+        add: Transition {
+            animations: [
+                NumberAnimation {
+                    properties: "opacity,scale"
+                    from: 0
+                    to: 1
+                    duration: 380
+                    easing.type: Easing.OutBack
+                    easing.overshoot: 1.12
+                }
+            ]
+        }
+        addDisplaced: Transition {
+            animations: [
+                NumberAnimation {
+                    property: "y"
+                    duration: 340
+                    easing.type: Easing.OutCubic
+                },
+                NumberAnimation {
+                    properties: "opacity,scale"
+                    to: 1
+                    duration: 340
+                    easing.type: Easing.OutBack
+                    easing.overshoot: 1.08
+                }
+            ]
+        }
+        displaced: Transition {
+            animations: [
+                NumberAnimation {
+                    property: "y"
+                    duration: 340
+                    easing.type: Easing.OutBack
+                    easing.overshoot: 1.05
+                },
+                NumberAnimation {
+                    properties: "opacity,scale"
+                    to: 1
+                    duration: 260
+                    easing.type: Easing.OutQuad
+                }
+            ]
+        }
+        move: Transition {
+            animations: [
+                NumberAnimation {
+                    property: "y"
+                    duration: 360
+                    easing.type: Easing.OutBack
+                    easing.overshoot: 1.06
+                },
+                NumberAnimation {
+                    properties: "opacity,scale"
+                    to: 1
+                    duration: 260
+                    easing.type: Easing.OutQuad
+                }
+            ]
+        }
+        moveDisplaced: Transition {
+            animations: [
+                NumberAnimation {
+                    property: "y"
+                    duration: 340
+                    easing.type: Easing.OutBack
+                    easing.overshoot: 1.04
+                },
+                NumberAnimation {
+                    properties: "opacity,scale"
+                    to: 1
+                    duration: 260
+                    easing.type: Easing.OutQuad
+                }
+            ]
+        }
+        remove: Transition {
+            animations: [
+                NumberAnimation {
+                    property: "x"
+                    to: width + 120
+                    duration: 300
+                    easing.type: Easing.InBack
+                    easing.overshoot: 1.15
+                },
+                NumberAnimation {
+                    property: "opacity"
+                    to: 0
+                    duration: 240
+                    easing.type: Easing.InQuad
+                },
+                NumberAnimation {
+                    property: "scale"
+                    to: 0.92
+                    duration: 300
+                    easing.type: Easing.InBack
+                }
+            ]
+        }
+        removeDisplaced: Transition {
+            animations: [
+                NumberAnimation {
+                    property: "y"
+                    duration: 340
+                    easing.type: Easing.OutBack
+                    easing.overshoot: 1.03
+                },
+                NumberAnimation {
+                    properties: "opacity,scale"
+                    to: 1
+                    duration: 260
+                    easing.type: Easing.OutQuad
+                }
+            ]
+        }
     }
 }
